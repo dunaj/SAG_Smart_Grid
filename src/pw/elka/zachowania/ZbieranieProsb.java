@@ -1,26 +1,33 @@
 package pw.elka.zachowania;
 
-import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 /**
- * Klasa implementujaca zachowanie Dystrybutorow
- * polegajace na zbieraniu prosb dotyczacych
- * zapotrzebowania na energie od odbiorcow
+ * Klasa implementujaca zachowanie Dystrybutorow polegajace na zbieraniu prosb
+ * dotyczacych zapotrzebowania na energie od odbiorcow
  */
-public class ZbieranieProsb extends Behaviour {
+public class ZbieranieProsb extends CyclicBehaviour {
 
 	private static final long serialVersionUID = -8694733170063523008L;
 
+	/**
+	 * TODO skonczyc ta metode
+	 */
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
+		// Dystrybutor oczekuje wiadomosci typu: prosba w tym zachowaniu
+		MessageTemplate mt = MessageTemplate
+				.MatchPerformative(ACLMessage.REQUEST);
+		ACLMessage msg = myAgent.receive(mt);
+		if (msg != null) {
+			// Message received. Process it
 
-	}
-
-	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
+		} else {
+			// jesli nie otrzymalem wiadomosci, to blokuje watek
+			block();
+		}
 	}
 
 }

@@ -17,8 +17,8 @@ public class SzukajEnergii extends Behaviour {
 
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
-
+		//TODO zrobic switcha obrazujacego protokol negocjacji
+		//TODO z innymi Dystrybutorami i Elektrowniami(?)
 	}
 
 	@Override
