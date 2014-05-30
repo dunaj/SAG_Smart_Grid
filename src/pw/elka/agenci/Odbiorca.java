@@ -74,14 +74,14 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	private void zmniejszZapotrzebowanie(int ile) {
 		zapotrzebowanie -= ile;
 	}
-	
+
 	/**
 	 * funkcja wyswietlajaca aktualne zapotrzebowanie na energie
 	 */
 	public String jakieZapotrzebowanie() {
-		return "Zapotrzebowanie Odbiorcy: "+zapotrzebowanie;
+		return "Zapotrzebowanie Odbiorcy: " + zapotrzebowanie;
 	}
-	
+
 	/**
 	 * Wewn klasa implementujaca zachowanie Odbiorcow Cykliczny pobor pradu.
 	 */
@@ -117,7 +117,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 		@Override
 		public void action() {
 			MessageTemplate mtAgree = MessageTemplate
-					.MatchPerformative(ACLMessage.AGREE);
+					.MatchPerformative(ACLMessage.CONFIRM);
 			ACLMessage odp = myAgent.receive(mtAgree);
 			if (odp != null) {
 				zmniejszZapotrzebowanie(Integer.parseInt(odp.getContent()));

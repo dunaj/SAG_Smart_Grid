@@ -1,31 +1,144 @@
 package pw.elka.agenci;
 
+import java.util.Random;
+
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class Elektrownia extends Agent {
 
 	private static final long serialVersionUID = -461482933527302411L;
 	static int liczbaElektrowni = 0;
 	
+	/**
+	 * co ile Elektrownia wytwarza energie
+	 */
+	static final int CZAS_TIKA = 5000;
 	
 	/**
-	 * Wewn klasa implementuj¹ca cykliczne zachowanie Elektrownii
-	 * polegaj¹ce na sprawdzaniu próœb o zapotrzebowanie na 
-	 * energiê i odpowiadaniu na te proœby.
-	 * Zachowanie to bêdzie tak¿e odpowiedzialne za cykliczne
-	 * wytwarzanie porcji energii.
+	 * numer Elektrowni
 	 */
-	public class ProdukcjaEnergii extends CyclicBehaviour {
+	final int nrElektrowni;
+	/**
+	 * Dystrybutor z ktorym polaczona jest Elektronia
+	 */
+	Dystrybutor dystrybutor;
+	/**
+	 * ilosc wyprodukowanej energii
+	 */
+	int wyprodukowanaEnergia;
+	/**
+	 * gorna granica produkowanej energii
+	 */
+	final int maxProdukcja;
+	
+	/**
+	 * Konstruktor Elektrowni, przyjmujacy dystrybutora i max produkcji
+	 */
+	Elektrownia(Dystrybutor d, int max) {
+		this.dystrybutor = d;
+		this.maxProdukcja=max;
+		this.wyprodukowanaEnergia = 0;
+		nrElektrowni = liczbaElektrowni;
+		liczbaElektrowni++;
+	}
+	
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		System.out.println("Elektrownia "+nrElektrowni+" jest gotowa do dzialania!");
+		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
+			
+			private static final long serialVersionUID = 11213112L;
+
+			@Override
+			protected void onTick() {
+				addBehaviour(new ProdukcjaEnergii());
+			}
+		});
+		addBehaviour(new PrzyjmowanieZgloszen());
+	}
+
+	@Override
+	protected void takeDown() {
+		super.takeDown();
+		System.out.println("Elektrownia "+nrElektrowni+" konczy swoje dzialanie!");
+	}
+
+	/**
+	 * TODO okomentowac
+	 */
+	private void produkujEnergie() {
+		Random gen = new Random();
+		wyprodukowanaEnergia=gen.nextInt(maxProdukcja);
+	}
+	
+	/**
+	 * TODO okomentowac
+	 */
+	private boolean sprawdzEnergie(int ile) {
+		return ile<wyprodukowanaEnergia;
+	}
+	
+	/**
+	 * TODO okomentowac
+	 */
+	private void oddajEnergie(int ile) {
+		wyprodukowanaEnergia-=ile;
+	}
+	
+	/**
+	 * Wewn klasa implementuj¹ca 
+	 * wytwarzanie porcji energii co pewien czas.
+	 */
+	public class ProdukcjaEnergii extends Behaviour {
 
 		private static final long serialVersionUID = -860241246931824539L;
-
 		@Override
 		public void action() {
-			// TODO Auto-generated method stub
-			
+			produkujEnergie();
+		}
+		@Override
+		public boolean done() {
+			return true;
 		}
 
 	}
 	
+	/**
+	 * Wewn klasa odpowiedzialna za przyjmowanie zgloszen od dystrybutora
+	 * i odpowiadanie na nie.
+	 */
+	private class PrzyjmowanieZgloszen extends CyclicBehaviour {
+
+		private static final long serialVersionUID = -8091563362530886850L;
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate
+					.MatchPerformative(ACLMessage.REQUEST);
+			ACLMessage prosba = myAgent.receive(mt);
+			if (prosba != null) {
+				int ile = Integer.parseInt(prosba.getContent());
+				if (sprawdzEnergie(ile)) {
+					ACLMessage odp = new ACLMessage(ACLMessage.AGREE);
+					odp.addReceiver(prosba.getSender());
+					oddajEnergie(ile);
+					myAgent.send(odp);
+				} else {
+					ACLMessage odp = new ACLMessage(ACLMessage.REFUSE);
+					odp.addReceiver(prosba.getSender());
+					myAgent.send(odp);
+				}
+			} else {
+				// jesli nie otrzymalem wiadomosci, to blokuje watek
+				block();
+			}
+		}	
+	}
 }
