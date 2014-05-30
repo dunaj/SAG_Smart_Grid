@@ -9,6 +9,12 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+/**
+ * Agent reprezentujacy jednostke wytwarzajaca energie
+ *  TODO wywalic konstruktory - wszystko dzieje sie w setup
+ * TODO jak wymusic, zeby odbiorcy komunikowali sie tylko z jednym dystrybutorem
+ * TODO a dystrybutorzy tylko z jedna elektrownia ;/
+ */
 public class Elektrownia extends Agent {
 
 	private static final long serialVersionUID = -461482933527302411L;
@@ -22,7 +28,7 @@ public class Elektrownia extends Agent {
 	/**
 	 * numer Elektrowni
 	 */
-	final int nrElektrowni;
+	//final int nrElektrowni;
 	/**
 	 * Dystrybutor z ktorym polaczona jest Elektronia
 	 */
@@ -34,25 +40,12 @@ public class Elektrownia extends Agent {
 	/**
 	 * gorna granica produkowanej energii
 	 */
-	final int maxProdukcja;
-	
-	/**
-	 * Konstruktor Elektrowni, przyjmujacy dystrybutora i max produkcji
-	 */
-	public Elektrownia(Dystrybutor d, int max) {
-		this.dystrybutor = d;
-		this.maxProdukcja=max;
-		this.wyprodukowanaEnergia = 0;
-		nrElektrowni = liczbaElektrowni;
-		liczbaElektrowni++;
-		setup();
-	}
-	
+	//final int maxProdukcja;
 	
 	@Override
 	protected void setup() {
 		super.setup();
-		System.out.println("Elektrownia "+nrElektrowni+" jest gotowa do dzialania!");
+		//System.out.println("Elektrownia "+nrElektrowni+" jest gotowa do dzialania!");
 		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
 			
 			private static final long serialVersionUID = 11213112L;
@@ -68,7 +61,7 @@ public class Elektrownia extends Agent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		System.out.println("Elektrownia "+nrElektrowni+" konczy swoje dzialanie!");
+		//System.out.println("Elektrownia "+nrElektrowni+" konczy swoje dzialanie!");
 	}
 
 	/**
@@ -76,7 +69,7 @@ public class Elektrownia extends Agent {
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
-		wyprodukowanaEnergia=gen.nextInt(maxProdukcja);
+		//wyprodukowanaEnergia=gen.nextInt(maxProdukcja);
 	}
 	
 	/**

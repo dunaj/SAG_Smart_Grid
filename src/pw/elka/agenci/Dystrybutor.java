@@ -14,39 +14,19 @@ import java.util.Vector;
  * Agent odpowiadajacy za odbieranie prosb o energie od odbiorcow i
  * przekazywanie prosb do Elektrowni, a takze za poszukiwanie brakujacej energii
  * u innych Dystrybutorow, wreszcie przekazywanie energii do odbiorcow.
+ * TODO wywalic konstruktory - wszystko dzieje sie w setup
+ * TODO jak wymusic, zeby odbiorcy komunikowali sie tylko z jednym dystrybutorem
+ * TODO a dystrybutorzy tylko z jedna elektrownia ;/
  */
 public class Dystrybutor extends Agent implements OdbieraczEnergii {
 
 	private static final long serialVersionUID = 8713713221778399107L;
 	static int liczbaDystrybutorow = 0;
 	
-	private final int nrDystrybutora;
+	//private final int nrDystrybutora;
 	private Elektrownia elektrownia;
 	private Vector<Dystrybutor> dystrybutorzy;
 	private Vector<OdbieraczEnergii> odbieracze;
-	
-	/**
-	 * konstruktor domyslny
-	 */
-	public Dystrybutor() {
-		dystrybutorzy = new Vector<Dystrybutor>();
-		odbieracze = new Vector<OdbieraczEnergii>();
-		nrDystrybutora = liczbaDystrybutorow;
-		liczbaDystrybutorow++;
-		setup();
-	}
-	
-	/**
-	 * Konstruktor z elektrownia i tablica dystrybutorow
-	 */
-	public Dystrybutor(Elektrownia e, Vector<Dystrybutor> dd) {
-		this.elektrownia = e;
-		this.dystrybutorzy = dd;
-		odbieracze = new Vector<OdbieraczEnergii>();
-		nrDystrybutora = liczbaDystrybutorow;
-		liczbaDystrybutorow++;
-		setup();
-	}
 	
 	/**
 	 * dodanie Dystrybutora , ktory bedzie polaczony
@@ -95,13 +75,13 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 	protected void setup() {
 		super.setup();
 		addBehaviour(new ZbieranieProsb());
-		System.out.println("Dystrybutor "+nrDystrybutora+" jest gotowy do dzialania!");
+		//System.out.println("Dystrybutor "+nrDystrybutora+" jest gotowy do dzialania!");
 	}
 
 	@Override
 	protected void takeDown() {
-		// TODO Auto-generated method stub
 		super.takeDown();
+		//System.out.println("Dystrybutor "+nrDystrybutora+" konczy swoje dzialanie!");
 	}
 
 	/**

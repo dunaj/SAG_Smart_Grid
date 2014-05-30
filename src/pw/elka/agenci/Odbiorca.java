@@ -11,6 +11,9 @@ import java.util.Random;
 
 /**
  * Agent proszacy o energie dytrybutorow i wykorzystujacy energie.
+ * TODO wywalic konstruktory - wszystko dzieje sie w setup
+ * TODO jak wymusic, zeby odbiorcy komunikowali sie tylko z jednym dystrybutorem
+ * TODO a dystrybutorzy tylko z jedna elektrownia ;/
  */
 public class Odbiorca extends Agent implements OdbieraczEnergii {
 
@@ -29,17 +32,6 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 */
 	private int zapotrzebowanie = 0;
 
-	/**
-	 * Konstruktor przyjmujacy Dystrybutora z ktorym ma byc polaczony Odbiorca
-	 * 
-	 * @param d
-	 *            - dystrybutor, z ktorym ma byc polaczony Odbiorca
-	 */
-	public Odbiorca(Dystrybutor d) {
-		this.dystrybutor = d;
-		setup();
-	}
-
 	@Override
 	protected void setup() {
 		super.setup();
@@ -54,7 +46,13 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 		addBehaviour(new OdbiorPradu());
 		System.out.println("Odbiorca "+nrOdbiorcy+" jest gotowy do dzialania!");
 	}
-
+	
+	@Override
+	protected void takeDown() {
+		super.takeDown();
+		System.out.println("Odbiorca "+nrOdbiorcy+" konczy swoje dzialanie!");
+	}
+	
 	/**
 	 * Generator poboru pradu w danej chwili.
 	 * 
