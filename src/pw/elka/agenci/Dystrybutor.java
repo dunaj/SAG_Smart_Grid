@@ -18,7 +18,9 @@ import java.util.Vector;
 public class Dystrybutor extends Agent implements OdbieraczEnergii {
 
 	private static final long serialVersionUID = 8713713221778399107L;
-
+	static int liczbaDystrybutorow = 0;
+	
+	private final int nrDystrybutora;
 	private Elektrownia elektrownia;
 	private Vector<Dystrybutor> dystrybutorzy;
 	private Vector<OdbieraczEnergii> odbieracze;
@@ -27,7 +29,11 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 	 * konstruktor domyslny
 	 */
 	public Dystrybutor() {
-		
+		dystrybutorzy = new Vector<Dystrybutor>();
+		odbieracze = new Vector<OdbieraczEnergii>();
+		nrDystrybutora = liczbaDystrybutorow;
+		liczbaDystrybutorow++;
+		setup();
 	}
 	
 	/**
@@ -36,6 +42,10 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 	public Dystrybutor(Elektrownia e, Vector<Dystrybutor> dd) {
 		this.elektrownia = e;
 		this.dystrybutorzy = dd;
+		odbieracze = new Vector<OdbieraczEnergii>();
+		nrDystrybutora = liczbaDystrybutorow;
+		liczbaDystrybutorow++;
+		setup();
 	}
 	
 	/**
@@ -83,8 +93,9 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 
 	@Override
 	protected void setup() {
-		// TODO Auto-generated method stub
 		super.setup();
+		addBehaviour(new ZbieranieProsb());
+		System.out.println("Dystrybutor "+nrDystrybutora+" jest gotowy do dzialania!");
 	}
 
 	@Override

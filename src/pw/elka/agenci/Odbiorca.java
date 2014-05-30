@@ -16,7 +16,13 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 
 	private static final long serialVersionUID = -7698025950501425520L;
 	private static final int CZAS_TIKA = 2000;
-
+	static int liczbaOdbiorcow = 0;
+	
+	/**
+	 * numer odbiorcy w systemie
+	 */
+	int nrOdbiorcy;
+	
 	private Dystrybutor dystrybutor;
 	/**
 	 * pole pokazujace ile odbiorca potrzebuje pradu
@@ -31,15 +37,14 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 */
 	public Odbiorca(Dystrybutor d) {
 		this.dystrybutor = d;
+		setup();
 	}
 
 	@Override
 	protected void setup() {
 		super.setup();
 		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
-			/**
-			 * 
-			 */
+			
 			private static final long serialVersionUID = 6022385825163721857L;
 
 			protected void onTick() {
@@ -47,6 +52,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 			}
 		});
 		addBehaviour(new OdbiorPradu());
+		System.out.println("Odbiorca "+nrOdbiorcy+" jest gotowy do dzialania!");
 	}
 
 	/**

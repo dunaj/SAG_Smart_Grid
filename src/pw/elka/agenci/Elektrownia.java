@@ -39,12 +39,13 @@ public class Elektrownia extends Agent {
 	/**
 	 * Konstruktor Elektrowni, przyjmujacy dystrybutora i max produkcji
 	 */
-	Elektrownia(Dystrybutor d, int max) {
+	public Elektrownia(Dystrybutor d, int max) {
 		this.dystrybutor = d;
 		this.maxProdukcja=max;
 		this.wyprodukowanaEnergia = 0;
 		nrElektrowni = liczbaElektrowni;
 		liczbaElektrowni++;
+		setup();
 	}
 	
 	
