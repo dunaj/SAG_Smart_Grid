@@ -23,65 +23,72 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 	private static final long serialVersionUID = 8713713221778399107L;
 	static int liczbaDystrybutorow = 0;
 	
-	//private final int nrDystrybutora;
-	private Elektrownia elektrownia;
-	private Vector<Dystrybutor> dystrybutorzy;
-	private Vector<OdbieraczEnergii> odbieracze;
-	
-	/**
-	 * dodanie Dystrybutora , ktory bedzie polaczony
-	 * z tym dystrybutorem
-	 * 
-	 * @param d
-	 *            - dodawany dystrybutor
-	 */
-	public void dodajDystrybutora(Dystrybutor d) {
-		dystrybutorzy.add(d);
-	}
-	
-	/**
-	 * dodanie Dystrybutorow , ktorzy beda polaczeni
-	 * z tym dystrybutorem
-	 * 
-	 * @param dd
-	 *            - dodawani dystrybutorzy
-	 */
-	public void dodajDystrybutora(Vector<Dystrybutor> dd) {
-		dystrybutorzy.addAll(dd);
-	}
-	
-	/**
-	 * dodanie Dystrybutora lub Odbiorcy
-	 * 
-	 * @param o
-	 *            - dodawany odbieracz
-	 */
-	public void dodajOdbieracza(OdbieraczEnergii o) {
-		odbieracze.add(o);
-	}
+	private int nrDystrybutora;
+	private AID idElektrowni;
+	private Vector<AID> dystrybutorzy;
+	//private Vector<OdbieraczEnergii> odbieracze;
 
-	/**
-	 * dodanie zbioru Dystrybutorów i Odbiorców, z którymi Dystrybutor ma byc
-	 * polaczony
-	 * 
-	 * @param o
-	 *            - dodawany odbieracz
-	 */
-	public void dodajOdbieraczy(Vector<OdbieraczEnergii> oo) {
-		odbieracze.addAll(oo);
-	}
+	
+//	/**
+//	 * dodanie Dystrybutora , ktory bedzie polaczony
+//	 * z tym dystrybutorem
+//	 * 
+//	 * @param d
+//	 *            - dodawany dystrybutor
+//	 */
+//	public void dodajDystrybutora(Dystrybutor d) {
+//		dystrybutorzy.add(d);
+//	}
+	
+//	/**
+//	 * dodanie Dystrybutorow , ktorzy beda polaczeni
+//	 * z tym dystrybutorem
+//	 * 
+//	 * @param dd
+//	 *            - dodawani dystrybutorzy
+//	 */
+//	public void dodajDystrybutora(Vector<Dystrybutor> dd) {
+//		dystrybutorzy.addAll(dd);
+//	}
+//	
+//	/**
+//	 * dodanie Dystrybutora lub Odbiorcy
+//	 * 
+//	 * @param o
+//	 *            - dodawany odbieracz
+//	 */
+//	public void dodajOdbieracza(OdbieraczEnergii o) {
+//		odbieracze.add(o);
+//	}
+//
+//	/**
+//	 * dodanie zbioru Dystrybutorów i Odbiorców, z którymi Dystrybutor ma byc
+//	 * polaczony
+//	 * 
+//	 * @param o
+//	 *            - dodawany odbieracz
+//	 */
+//	public void dodajOdbieraczy(Vector<OdbieraczEnergii> oo) {
+//		odbieracze.addAll(oo);
+//	}
 
 	@Override
 	protected void setup() {
 		super.setup();
+		nrDystrybutora = liczbaDystrybutorow++;
+		Object[] args = getArguments();
+        idElektrowni = new AID(args[0].toString(), AID.ISLOCALNAME);
+        for (int i = 1; i<args.length; i++){
+        	dystrybutorzy.add(new AID(args[i].toString(), AID.ISLOCALNAME));
+        }
 		addBehaviour(new ZbieranieProsb());
-		//System.out.println("Dystrybutor "+nrDystrybutora+" jest gotowy do dzialania!");
+		System.out.println("Dystrybutor "+nrDystrybutora+" jest gotowy do dzialania!");
 	}
 
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		//System.out.println("Dystrybutor "+nrDystrybutora+" konczy swoje dzialanie!");
+		System.out.println("Dystrybutor "+nrDystrybutora+" konczy swoje dzialanie!");
 	}
 
 	/**
@@ -153,7 +160,7 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 			switch (krok) {
 			case 0: // pytaj swojej elektrowni
 				ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
-				prosba.addReceiver(elektrownia.getAID());
+				prosba.addReceiver(idElektrowni);
 				prosba.setContent(String.valueOf(szukanaEnergia));
 				prosba.setPerformative(ACLMessage.REQUEST);
 				myAgent.send(prosba);
@@ -173,8 +180,8 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 					// dystrybutorow
 					ACLMessage prosba2 = new ACLMessage(ACLMessage.REQUEST);
 
-					for (OdbieraczEnergii o : odbieracze) {
-						prosba2.addReceiver(((Agent) o).getAID());
+					for (AID d: dystrybutorzy) {
+						prosba2.addReceiver(d);
 					}
 					prosba2.setContent(String.valueOf(szukanaEnergia));
 					prosba2.setPerformative(ACLMessage.REQUEST);
@@ -190,8 +197,8 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 				if (odp2 != null) {
 					// broadcast ze juz mamy energie
 					ACLMessage informacja = new ACLMessage(ACLMessage.INFORM);
-					for (Dystrybutor d : dystrybutorzy) {
-						informacja.addReceiver(d.getAID());
+					for (AID d : dystrybutorzy) {
+						informacja.addReceiver(d);
 					}
 					informacja.setContent(String.valueOf(szukanaEnergia));
 					informacja.setPerformative(ACLMessage.REQUEST);

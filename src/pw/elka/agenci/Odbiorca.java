@@ -1,5 +1,6 @@
 package pw.elka.agenci;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -26,7 +27,10 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 */
 	int nrOdbiorcy;
 	
-	private Dystrybutor dystrybutor;
+	/**
+	 * dystrybutor do ktorego dany odbiorca jest podlaczony
+	 */
+	private AID idDystrybutora;
 	/**
 	 * pole pokazujace ile odbiorca potrzebuje pradu
 	 */
@@ -35,6 +39,9 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	@Override
 	protected void setup() {
 		super.setup();
+		Object[] args = getArguments();
+        idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
+        nrOdbiorcy = liczbaOdbiorcow++;
 		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
 			
 			private static final long serialVersionUID = 6022385825163721857L;
@@ -99,7 +106,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 			ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
 			int ile = ileEnergii();
 			prosba.setContent(String.valueOf(ile));
-			prosba.addReceiver(dystrybutor.getAID());
+			prosba.addReceiver(idDystrybutora);
 			((Odbiorca) myAgent).zwiekszZapotrzebowanie(ile);
 			myAgent.send(prosba);
 		}

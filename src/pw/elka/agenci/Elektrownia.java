@@ -2,6 +2,7 @@ package pw.elka.agenci;
 
 import java.util.Random;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -28,11 +29,11 @@ public class Elektrownia extends Agent {
 	/**
 	 * numer Elektrowni
 	 */
-	//final int nrElektrowni;
+	private int nrElektrowni;
 	/**
 	 * Dystrybutor z ktorym polaczona jest Elektronia
 	 */
-	Dystrybutor dystrybutor;
+	AID idDystrybutora;
 	/**
 	 * ilosc wyprodukowanej energii
 	 */
@@ -40,12 +41,15 @@ public class Elektrownia extends Agent {
 	/**
 	 * gorna granica produkowanej energii
 	 */
-	//final int maxProdukcja;
+	final int maxProdukcja = 500;
 	
 	@Override
 	protected void setup() {
 		super.setup();
-		//System.out.println("Elektrownia "+nrElektrowni+" jest gotowa do dzialania!");
+		nrElektrowni = liczbaElektrowni++;
+		Object[] args = getArguments();
+		//idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
+		System.out.println("Elektrownia "+nrElektrowni+" jest gotowa do dzialania!");
 		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
 			
 			private static final long serialVersionUID = 11213112L;
@@ -61,7 +65,7 @@ public class Elektrownia extends Agent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		//System.out.println("Elektrownia "+nrElektrowni+" konczy swoje dzialanie!");
+		System.out.println("Elektrownia "+nrElektrowni+" konczy swoje dzialanie!");
 	}
 
 	/**
@@ -69,7 +73,7 @@ public class Elektrownia extends Agent {
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
-		//wyprodukowanaEnergia=gen.nextInt(maxProdukcja);
+		wyprodukowanaEnergia=gen.nextInt(maxProdukcja);
 	}
 	
 	/**
