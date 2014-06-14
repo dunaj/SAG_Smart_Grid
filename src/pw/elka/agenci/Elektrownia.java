@@ -1,7 +1,5 @@
 package pw.elka.agenci;
 
-import java.util.Random;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -10,22 +8,24 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.util.Random;
+
 /**
- * Agent reprezentujacy jednostke wytwarzajaca energie
- *  TODO wywalic konstruktory - wszystko dzieje sie w setup
- * TODO jak wymusic, zeby odbiorcy komunikowali sie tylko z jednym dystrybutorem
- * TODO a dystrybutorzy tylko z jedna elektrownia ;/
+ * Agent reprezentujacy jednostke wytwarzajaca energie TODO wywalic konstruktory
+ * - wszystko dzieje sie w setup TODO jak wymusic, zeby odbiorcy komunikowali
+ * sie tylko z jednym dystrybutorem TODO a dystrybutorzy tylko z jedna
+ * elektrownia ;/
  */
 public class Elektrownia extends Agent {
 
 	private static final long serialVersionUID = -461482933527302411L;
 	static int liczbaElektrowni = 0;
-	
+
 	/**
 	 * co ile Elektrownia wytwarza energie
 	 */
-	static final int CZAS_TIKA = 5000;
-	
+	static final int CZAS_TIKA = 3000;
+
 	/**
 	 * numer Elektrowni
 	 */
@@ -41,17 +41,20 @@ public class Elektrownia extends Agent {
 	/**
 	 * gorna granica produkowanej energii
 	 */
-	final int maxProdukcja = 500;
-	
+	final int maxProdukcja = 3000;
+
 	@Override
 	protected void setup() {
 		super.setup();
 		nrElektrowni = liczbaElektrowni++;
 		Object[] args = getArguments();
-		//idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
-		System.out.println("Elektrownia "+nrElektrowni+" jest gotowa do dzialania!");
+		idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
+		System.out.println("Elektrownia " + nrElektrowni
+				+ " jest gotowa do dzialania!");
+		System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
+        System.out.println(toJa()+"Moje id: "+this.getAID());
 		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
-			
+
 			private static final long serialVersionUID = 11213112L;
 
 			@Override
@@ -65,7 +68,15 @@ public class Elektrownia extends Agent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		System.out.println("Elektrownia "+nrElektrowni+" konczy swoje dzialanie!");
+		System.out.println("Elektrownia " + nrElektrowni
+				+ " konczy swoje dzialanie!");
+	}
+
+	/**
+	 * 
+	 */
+	public String toJa() {
+		return "Elektrownia " + nrElektrowni + ": ";
 	}
 
 	/**
@@ -73,44 +84,47 @@ public class Elektrownia extends Agent {
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
-		wyprodukowanaEnergia=gen.nextInt(maxProdukcja);
+		wyprodukowanaEnergia = gen.nextInt(maxProdukcja);
+		System.out.println(toJa() + "Wyprodukowalem " + wyprodukowanaEnergia
+				+ "W energii");
 	}
-	
+
 	/**
 	 * TODO okomentowac
 	 */
 	private boolean sprawdzEnergie(int ile) {
-		return ile<wyprodukowanaEnergia;
+		return ile < wyprodukowanaEnergia;
 	}
-	
+
 	/**
 	 * TODO okomentowac
 	 */
 	private void oddajEnergie(int ile) {
-		wyprodukowanaEnergia-=ile;
+		wyprodukowanaEnergia -= ile;
 	}
-	
+
 	/**
-	 * Wewn klasa implementuj¹ca 
-	 * wytwarzanie porcji energii co pewien czas.
+	 * Wewn klasa implementuj¹ca wytwarzanie porcji energii co pewien czas.
 	 */
 	public class ProdukcjaEnergii extends Behaviour {
 
 		private static final long serialVersionUID = -860241246931824539L;
+
 		@Override
 		public void action() {
 			produkujEnergie();
 		}
+
 		@Override
 		public boolean done() {
 			return true;
 		}
 
 	}
-	
+
 	/**
-	 * Wewn klasa odpowiedzialna za przyjmowanie zgloszen od dystrybutora
-	 * i odpowiadanie na nie.
+	 * Wewn klasa odpowiedzialna za przyjmowanie zgloszen od dystrybutora i
+	 * odpowiadanie na nie.
 	 */
 	private class PrzyjmowanieZgloszen extends CyclicBehaviour {
 
@@ -126,17 +140,21 @@ public class Elektrownia extends Agent {
 				if (sprawdzEnergie(ile)) {
 					ACLMessage odp = new ACLMessage(ACLMessage.AGREE);
 					odp.addReceiver(prosba.getSender());
+					System.out.println(toJa() + "Mam " + ile
+							+ "W energii. Wysylam do "
+							+ prosba.getSender().toString());
 					oddajEnergie(ile);
 					myAgent.send(odp);
 				} else {
 					ACLMessage odp = new ACLMessage(ACLMessage.REFUSE);
 					odp.addReceiver(prosba.getSender());
+					System.out.println(toJa()+"Nie mam tyle energii!");
 					myAgent.send(odp);
 				}
 			} else {
 				// jesli nie otrzymalem wiadomosci, to blokuje watek
 				block();
 			}
-		}	
+		}
 	}
 }

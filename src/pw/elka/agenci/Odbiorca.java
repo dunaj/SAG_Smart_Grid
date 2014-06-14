@@ -41,12 +41,15 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 		super.setup();
 		Object[] args = getArguments();
         idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
+        System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
+        System.out.println(toJa()+"Moje id: "+this.getAID());
         nrOdbiorcy = liczbaOdbiorcow++;
 		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
 			
 			private static final long serialVersionUID = 6022385825163721857L;
 
 			protected void onTick() {
+				System.out.println(jakieZapotrzebowanie());
 				addBehaviour(new PoborPradu());
 			}
 		});
@@ -67,7 +70,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 */
 	private int ileEnergii() {
 		Random gen = new Random();
-		return gen.nextInt(1000);
+		return gen.nextInt(500);
 	}
 
 	/**
@@ -90,9 +93,16 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 * funkcja wyswietlajaca aktualne zapotrzebowanie na energie
 	 */
 	public String jakieZapotrzebowanie() {
-		return "Zapotrzebowanie Odbiorcy: " + zapotrzebowanie;
+		return toJa()+"Zapotrzebowanie: " + zapotrzebowanie+"W.";
 	}
-
+	
+	/**
+	 * 
+	 */
+	public String toJa() {
+		return "Odbiorca "+nrOdbiorcy+": ";
+	}
+	
 	/**
 	 * Wewn klasa implementujaca zachowanie Odbiorcow Cykliczny pobor pradu.
 	 */
@@ -109,6 +119,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 			prosba.addReceiver(idDystrybutora);
 			((Odbiorca) myAgent).zwiekszZapotrzebowanie(ile);
 			myAgent.send(prosba);
+			System.out.println(toJa()+"Proszê o "+ile+"W energii!!");
 		}
 
 		@Override
@@ -132,6 +143,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 			ACLMessage odp = myAgent.receive(mtAgree);
 			if (odp != null) {
 				zmniejszZapotrzebowanie(Integer.parseInt(odp.getContent()));
+				System.out.println(toJa()+"Dosta³em "+Integer.parseInt(odp.getContent())+"W energii!!");
 			} else {
 				block();
 			}

@@ -11,8 +11,6 @@ import jade.wrapper.ContainerController;
 @SuppressWarnings("serial")
 public class AgentStartowy {//extends Agent {
 	
-	
-	
 //	@Override
 //	protected void setup() {
 	public static void main(String args[]) {
@@ -35,7 +33,7 @@ public class AgentStartowy {//extends Agent {
 		/* argumenty dla Elektrowni 1 */
 		Object[] e1Args = new Object[1];
 		String e1Name = "e1";
-		d1Args[0] = "d1";
+		e1Args[0] = "d1";
 		/* Koniec argumentow Elektrowni 1*/		
 		if (rt == null) {
 			System.out.println("nullllll11!!!!!!!!!!!!");
@@ -43,7 +41,7 @@ public class AgentStartowy {//extends Agent {
 		if (p==null) {
 			System.out.println("p===nullll!!!!");
 		}
-		ContainerController cc = rt.createAgentContainer(p);
+		ContainerController cc = rt.createMainContainer(p);
 		try {
 			AgentController e1 = cc.createNewAgent(e1Name, "pw.elka.agenci.Elektrownia", e1Args);
 			AgentController d1 = cc.createNewAgent(d1Name, "pw.elka.agenci.Dystrybutor", d1Args);
