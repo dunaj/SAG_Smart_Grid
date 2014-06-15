@@ -21,7 +21,7 @@ public class Elektrownia extends Agent {
 	/**
 	 * co ile Elektrownia wytwarza energie
 	 */
-	static final int CZAS_TIKA = 15000;
+	static final int CZAS_TIKA = 3000;
 
 	/**
 	 * numer Elektrowni
@@ -81,7 +81,7 @@ public class Elektrownia extends Agent {
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
-		wyprodukowanaEnergia = gen.nextInt(maxProdukcja);
+		wyprodukowanaEnergia += gen.nextInt(maxProdukcja);
 		System.out.println(toJa() + "Wyprodukowalem " + wyprodukowanaEnergia
 				+ "W energii");
 	}
@@ -137,6 +137,7 @@ public class Elektrownia extends Agent {
 				if (sprawdzEnergie(ile)) {
 					ACLMessage odp = new ACLMessage(ACLMessage.AGREE);
 					odp.addReceiver(prosba.getSender());
+					odp.setConversationId(prosba.getConversationId());
 					odp.setContent((new Integer(ile)).toString());
 					System.out.println(toJa() + "Mam " + ile
 							+ "W energii. Wysylam do "
@@ -148,6 +149,7 @@ public class Elektrownia extends Agent {
 					if (wyprodukowanaEnergia > 0){
 						ACLMessage odp = new ACLMessage(ACLMessage.INFORM);
 						odp.addReceiver(prosba.getSender());
+						odp.setConversationId(prosba.getConversationId());
 						odp.setContent((new Integer(wyprodukowanaEnergia)).toString());
 						System.out.println(toJa() + "Mam " + wyprodukowanaEnergia
 								+ "W energii. Wysylam do "
@@ -159,6 +161,7 @@ public class Elektrownia extends Agent {
 						// jesli w ogole nic nie mam informuje o tym dystr
 						ACLMessage odp = new ACLMessage(ACLMessage.REFUSE);
 						odp.addReceiver(prosba.getSender());
+						odp.setConversationId(prosba.getConversationId());
 						System.out.println(toJa()+"Nie mam w ogóle energii w tej chwili!");
 						myAgent.send(odp);
 					}

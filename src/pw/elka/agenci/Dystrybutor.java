@@ -23,7 +23,8 @@ public class Dystrybutor extends Agent {
 	private int nrDystrybutora;
 	private AID idElektrowni;
 	private Vector<AID> dystrybutorzy;
-
+	private String conversationId;
+	
 	@Override
 	protected void setup() {
 		super.setup();
@@ -72,6 +73,7 @@ public class Dystrybutor extends Agent {
 				int energia = Integer.parseInt((prosba.getContent()));
 				System.out.println(toJa() + "Odebra³em proœbê od "
 						+ odbiorca.toString() + " o " + energia + "W energii");
+				conversationId = prosba.getConversationId(); 
 				myAgent.addBehaviour(new SzukajEnergii(odbiorca, energia));
 			} else {
 				// jesli nie otrzymalem wiadomosci, to blokuje watek
@@ -112,18 +114,21 @@ public class Dystrybutor extends Agent {
 		 */
 		@Override
 		public void action() {
-			MessageTemplate mtAgree = MessageTemplate
-					.MatchPerformative(ACLMessage.AGREE);
-			MessageTemplate mtRefuse = MessageTemplate
-					.MatchPerformative(ACLMessage.REFUSE);
-			MessageTemplate mtInform = MessageTemplate
-					.MatchPerformative(ACLMessage.INFORM);
-
+			
+			
+			MessageTemplate mtAgree = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.AGREE), 
+					MessageTemplate.MatchConversationId(conversationId));
+			MessageTemplate mtRefuse = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REFUSE), 
+					MessageTemplate.MatchConversationId(conversationId));
+			MessageTemplate mtInform = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
+					MessageTemplate.MatchConversationId(conversationId));
+			
 			switch (krok) {
 			case 0: // pytaj swojej elektrowni
 				ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
 				prosba.addReceiver(idElektrowni);
 				prosba.setContent(String.valueOf(szukanaEnergia));
+				prosba.setConversationId(conversationId);
 				prosba.setPerformative(ACLMessage.REQUEST);
 				myAgent.send(prosba);
 				krok = 1;
@@ -158,9 +163,9 @@ public class Dystrybutor extends Agent {
 							}
 						}
 						prosba2.setContent(String.valueOf(szukanaEnergia));
-						prosba2.setPerformative(ACLMessage.REQUEST);
-						myAgent.send(prosba2);
+						prosba2.setConversationId(conversationId);
 						krok = 2;
+						myAgent.send(prosba2);
 					} else {
 						//koncz szukanie i tak juz nic nie znajdziesz
 						krok = 3;
@@ -179,7 +184,7 @@ public class Dystrybutor extends Agent {
 						}
 					}
 					prosba2.setContent(String.valueOf(szukanaEnergia));
-					prosba2.setPerformative(ACLMessage.REQUEST);
+					prosba2.setConversationId(conversationId);
 					myAgent.send(prosba2);
 					krok = 2;
 
@@ -189,8 +194,8 @@ public class Dystrybutor extends Agent {
 				break;
 			case 2:
 				ACLMessage odp2 = myAgent.receive(mtAgree);
-				MessageTemplate mtConfirm = MessageTemplate
-				.MatchPerformative(ACLMessage.CONFIRM);
+				MessageTemplate mtConfirm = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), 
+						MessageTemplate.MatchConversationId(conversationId));
 				ACLMessage odDystrybutora = myAgent.receive(mtConfirm);
 				if( odDystrybutora != null )
 				{
@@ -209,6 +214,7 @@ public class Dystrybutor extends Agent {
 						}
 					}
 					informacja.setContent(String.valueOf(szukanaEnergia));
+					informacja.setConversationId(conversationId);
 					//informacja.setPerformative(ACLMessage.INFORM);
 					myAgent.send(informacja);
 					// mamy energie wiec mozemy ja dostarczac
@@ -251,6 +257,7 @@ public class Dystrybutor extends Agent {
 			ACLMessage przesylka = new ACLMessage(ACLMessage.CONFIRM);
 			przesylka.setContent(String.valueOf(dostarczanaEnergia));
 			przesylka.addReceiver(odbiorca);
+			przesylka.setConversationId(conversationId);
 			System.out.println(toJa()+"Przekazujê "+dostarczanaEnergia+"W energii do "+odbiorca);
 			myAgent.send(przesylka);
 		}

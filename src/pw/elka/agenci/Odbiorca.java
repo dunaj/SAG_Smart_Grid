@@ -16,7 +16,7 @@ import java.util.Random;
 public class Odbiorca extends Agent {
 
 	private static final long serialVersionUID = -7698025950501425520L;
-	private static final int CZAS_TIKA = 20000;
+	private static final int CZAS_TIKA = 3000;
 	static int liczbaOdbiorcow = 0;
 	private final int ILE_POTRZEBUJE_MAKS = 1000;
 	
@@ -33,11 +33,15 @@ public class Odbiorca extends Agent {
 	 * pole pokazujace ile odbiorca potrzebuje pradu
 	 */
 	private int zapotrzebowanie = 0;
+	
+	private String conversationId;
 
 	@Override
 	protected void setup() {
 		super.setup();
+		this.conversationId = String.valueOf(this.hashCode());
 		Object[] args = getArguments();
+		
         idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
         System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
         System.out.println(toJa()+"Moje id: "+this.getAID());
@@ -115,6 +119,7 @@ public class Odbiorca extends Agent {
 			int nowaEnergia = ((Odbiorca) myAgent).ileEnergii();
 			((Odbiorca) myAgent).zwiekszZapotrzebowanie(nowaEnergia);
 			prosba.setContent(String.valueOf(zapotrzebowanie));
+			prosba.setConversationId(conversationId);
 			prosba.addReceiver(idDystrybutora);
 			System.out.println(toJa()+"Zapotrzebowanie zwiêkszone o "+nowaEnergia +"W energii!!");
 			System.out.println(toJa()+"Proszê o "+zapotrzebowanie+"W energii!!");
@@ -137,8 +142,8 @@ public class Odbiorca extends Agent {
 
 		@Override
 		public void action() {
-			MessageTemplate mtAgree = MessageTemplate
-					.MatchPerformative(ACLMessage.CONFIRM);
+			MessageTemplate mtAgree = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM); 
+					
 			ACLMessage odp = myAgent.receive(mtAgree);
 			if (odp != null) {
 				zmniejszZapotrzebowanie(Integer.parseInt(odp.getContent()));
