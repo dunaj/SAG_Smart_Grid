@@ -16,7 +16,7 @@ import java.util.Random;
 public class Odbiorca extends Agent implements OdbieraczEnergii {
 
 	private static final long serialVersionUID = -7698025950501425520L;
-	private static final int CZAS_TIKA = 3000;
+	private static final int CZAS_TIKA = 20000;
 	static int liczbaOdbiorcow = 0;
 	private final int ILE_POTRZEBUJE_MAKS = 1000;
 	
@@ -42,7 +42,8 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
         System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
         System.out.println(toJa()+"Moje id: "+this.getAID());
         nrOdbiorcy = liczbaOdbiorcow++;
-		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
+        Random gen = new Random();        
+		addBehaviour(new TickerBehaviour(this, gen.nextInt(CZAS_TIKA)) {
 			
 			private static final long serialVersionUID = 6022385825163721857L;
 
@@ -112,11 +113,12 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 		public void action() {
 
 			ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
-			zwiekszZapotrzebowanie(ileEnergii());
+			int nowaEnergia = ((Odbiorca) myAgent).ileEnergii();
+			((Odbiorca) myAgent).zwiekszZapotrzebowanie(nowaEnergia);
 			prosba.setContent(String.valueOf(zapotrzebowanie));
 			prosba.addReceiver(idDystrybutora);
+			System.out.println(toJa()+"Zapotrzebowanie zwiêkszone o "+nowaEnergia +"W energii!!");
 			System.out.println(toJa()+"Proszê o "+zapotrzebowanie+"W energii!!");
-			((Odbiorca) myAgent).zwiekszZapotrzebowanie(zapotrzebowanie);
 			myAgent.send(prosba);
 			
 		}
