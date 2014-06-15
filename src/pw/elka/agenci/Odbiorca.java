@@ -116,7 +116,6 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 			prosba.setContent(String.valueOf(zapotrzebowanie));
 			prosba.addReceiver(idDystrybutora);
 			System.out.println(toJa()+"Proszê o "+zapotrzebowanie+"W energii!!");
-			((Odbiorca) myAgent).zwiekszZapotrzebowanie(zapotrzebowanie);
 			myAgent.send(prosba);
 			
 		}
