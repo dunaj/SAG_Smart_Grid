@@ -40,7 +40,7 @@ public class Elektrownia extends Agent {
 	/**
 	 * gorna granica produkowanej energii
 	 */
-	final int maxProdukcja = 3000;
+	final int maxProdukcja = 1000;
 
 	@Override
 	protected void setup() {

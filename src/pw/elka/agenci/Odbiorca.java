@@ -18,6 +18,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	private static final long serialVersionUID = -7698025950501425520L;
 	private static final int CZAS_TIKA = 3000;
 	static int liczbaOdbiorcow = 0;
+	private final int ILE_POTRZEBUJE_MAKS = 1000;
 	
 	/**
 	 * numer odbiorcy w systemie
@@ -67,7 +68,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 */
 	private int ileEnergii() {
 		Random gen = new Random();
-		return gen.nextInt(500);
+		return gen.nextInt(ILE_POTRZEBUJE_MAKS);
 	}
 
 	/**
@@ -111,12 +112,13 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 		public void action() {
 
 			ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
-			int ile = ileEnergii();
-			prosba.setContent(String.valueOf(ile));
+			zwiekszZapotrzebowanie(ileEnergii());
+			prosba.setContent(String.valueOf(zapotrzebowanie));
 			prosba.addReceiver(idDystrybutora);
-			((Odbiorca) myAgent).zwiekszZapotrzebowanie(ile);
+			System.out.println(toJa()+"Proszê o "+zapotrzebowanie+"W energii!!");
+			((Odbiorca) myAgent).zwiekszZapotrzebowanie(zapotrzebowanie);
 			myAgent.send(prosba);
-			System.out.println(toJa()+"Proszê o "+ile+"W energii!!");
+			
 		}
 
 		@Override
