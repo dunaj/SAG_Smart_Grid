@@ -205,7 +205,7 @@ public class Dystrybutor extends Agent {
 					krok = 3;
 				}
 				else if (odp2 != null) {
-/*					// broadcast ze juz mamy energie
+					// broadcast ze juz mamy energie
 					ACLMessage informacja = new ACLMessage(ACLMessage.INFORM);
 					for (AID d : dystrybutorzy) {
 						if (!d.equals(odbiorca))
@@ -213,17 +213,13 @@ public class Dystrybutor extends Agent {
 							informacja.addReceiver(d);
 						}
 					}
-			//		informacja.setContent(String.valueOf(szukanaEnergia));
-			//		informacja.setConversationId(conversationId);
+					informacja.setContent(String.valueOf(szukanaEnergia));
+					informacja.setConversationId(conversationId);
 					//informacja.setPerformative(ACLMessage.INFORM);
-			//		myAgent.send(informacja);
+					myAgent.send(informacja);
 					// mamy energie wiec mozemy ja dostarczac
-*/					int energia = Integer.parseInt(odp2.getContent());
-					if( szukanaEnergia > 0 )
-					{
-						szukanaEnergia -= energia;
-						myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,energia));
-					}
+					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
+							szukanaEnergia));
 					krok = 3;
 				} else {
 					block();

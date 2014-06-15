@@ -34,12 +34,12 @@ public class Odbiorca extends Agent {
 	 */
 	private int zapotrzebowanie = 0;
 	
-	//private String conversationId;
+	private String conversationId;
 
 	@Override
 	protected void setup() {
 		super.setup();
-		//this.conversationId = String.valueOf(this.hashCode());
+		this.conversationId = String.valueOf(this.hashCode());
 		Object[] args = getArguments();
 		
         idDystrybutora = new AID(args[0].toString(), AID.ISLOCALNAME);
@@ -119,7 +119,7 @@ public class Odbiorca extends Agent {
 			int nowaEnergia = ((Odbiorca) myAgent).ileEnergii();
 			((Odbiorca) myAgent).zwiekszZapotrzebowanie(nowaEnergia);
 			prosba.setContent(String.valueOf(zapotrzebowanie));
-			prosba.setConversationId(String.valueOf(this.hashCode()));
+			prosba.setConversationId(conversationId);
 			prosba.addReceiver(idDystrybutora);
 			System.out.println(toJa()+"Zapotrzebowanie zwiêkszone o "+nowaEnergia +"W energii!!");
 			System.out.println(toJa()+"Proszê o "+zapotrzebowanie+"W energii!!");
