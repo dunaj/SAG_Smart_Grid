@@ -23,7 +23,7 @@ public class Elektrownia extends Agent {
 	/**
 	 * co ile Elektrownia wytwarza energie
 	 */
-	static final int CZAS_TIKA = 3000;
+	static final int CZAS_TIKA = 15000;
 
 	/**
 	 * numer Elektrowni
@@ -52,7 +52,8 @@ public class Elektrownia extends Agent {
 				+ " jest gotowa do dzialania!");
 		System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
         System.out.println(toJa()+"Moje id: "+this.getAID());
-		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
+        Random gen = new Random();
+		addBehaviour(new TickerBehaviour(this, gen.nextInt(CZAS_TIKA)) {
 
 			private static final long serialVersionUID = 11213112L;
 
@@ -83,7 +84,7 @@ public class Elektrownia extends Agent {
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
-		wyprodukowanaEnergia = gen.nextInt(maxProdukcja);
+		wyprodukowanaEnergia += gen.nextInt(maxProdukcja);
 		System.out.println(toJa() + "Wyprodukowalem " + wyprodukowanaEnergia
 				+ "W energii");
 	}

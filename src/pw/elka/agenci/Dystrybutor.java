@@ -151,7 +151,10 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 						// jesli sa jacys dystrybutorzy przypieci do tego szukaj u nich
 						ACLMessage prosba2 = new ACLMessage(ACLMessage.REQUEST);
 						for (AID d : dystrybutorzy) {
-							prosba2.addReceiver(d);
+							if (!d.equals(odbiorca))
+							{
+								prosba2.addReceiver(d);
+							}
 						}
 						prosba2.setContent(String.valueOf(szukanaEnergia));
 						prosba2.setPerformative(ACLMessage.REQUEST);
@@ -169,7 +172,10 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 					ACLMessage prosba2 = new ACLMessage(ACLMessage.REQUEST);
 
 					for (AID d : dystrybutorzy) {
-						prosba2.addReceiver(d);
+						if (!d.equals(odbiorca))
+						{
+							prosba2.addReceiver(d);
+						}
 					}
 					prosba2.setContent(String.valueOf(szukanaEnergia));
 					prosba2.setPerformative(ACLMessage.REQUEST);
@@ -186,10 +192,13 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 					// broadcast ze juz mamy energie
 					ACLMessage informacja = new ACLMessage(ACLMessage.INFORM);
 					for (AID d : dystrybutorzy) {
-						informacja.addReceiver(d);
+						if (!d.equals(odbiorca))
+						{
+							informacja.addReceiver(d);
+						}
 					}
 					informacja.setContent(String.valueOf(szukanaEnergia));
-					informacja.setPerformative(ACLMessage.REQUEST);
+					//informacja.setPerformative(ACLMessage.INFORM);
 					myAgent.send(informacja);
 					// mamy energie wiec mozemy ja dostarczac
 					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
