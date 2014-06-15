@@ -15,7 +15,7 @@ import java.util.Vector;
  * przekazywanie prosb do Elektrowni, a takze za poszukiwanie brakujacej energii
  * u innych Dystrybutorow, wreszcie przekazywanie energii do odbiorcow.
  */
-public class Dystrybutor extends Agent implements OdbieraczEnergii {
+public class Dystrybutor extends Agent {
 
 	private static final long serialVersionUID = 8713713221778399107L;
 	static int liczbaDystrybutorow = 0;

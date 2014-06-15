@@ -3,12 +3,10 @@ package pw.elka.agenci;
 import jade.core.Runtime;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import jade.core.Agent;
-import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 
-@SuppressWarnings("serial")
+
 public class AgentStartowy {//extends Agent {
 	
 //	@Override

@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * Agent proszacy o energie dytrybutorow i wykorzystujacy energie.
  */
-public class Odbiorca extends Agent implements OdbieraczEnergii {
+public class Odbiorca extends Agent {
 
 	private static final long serialVersionUID = -7698025950501425520L;
 	private static final int CZAS_TIKA = 20000;
@@ -127,7 +127,6 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 		public boolean done() {
 			return true;
 		}
-
 	}
 
 	/**

@@ -12,8 +12,6 @@ import java.util.Random;
 
 /**
  * Agent reprezentujacy jednostke wytwarzajaca energie 
- * TODO Elektrownia na prosbe wysyla tyle energii ile ma,
- * TODO jesli prosba jest wieksza niz ilosc posiadanej energii
  */
 public class Elektrownia extends Agent {
 
@@ -30,7 +28,7 @@ public class Elektrownia extends Agent {
 	 */
 	private int nrElektrowni;
 	/**
-	 * Dystrybutor z ktorym polaczona jest Elektrownia
+	 * Dystrybutor, z ktorym polaczona jest Elektrownia
 	 */
 	AID idDystrybutora;
 	/**
@@ -72,14 +70,14 @@ public class Elektrownia extends Agent {
 	}
 
 	/**
-	 * 
+	 * Funkcja, za pomoca ktorej Elektrownia sie przedstawia
 	 */
 	public String toJa() {
 		return "Elektrownia " + this.getName().substring(0,2) + ": ";
 	}
 
 	/**
-	 * TODO okomentowac
+	 * Produkcja losowej ilosci energii
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
@@ -89,14 +87,15 @@ public class Elektrownia extends Agent {
 	}
 
 	/**
-	 * TODO okomentowac
+	 * Funkcja sprawdzajaca, czy Elektrownia posiada tyle energii o ile ja prosza
 	 */
 	private boolean sprawdzEnergie(int ile) {
 		return ile < wyprodukowanaEnergia;
 	}
 
 	/**
-	 * TODO okomentowac
+	 * zmniejszenie ilosci posiadanej energii
+	 * @param ile - o ile zmniejszyc ilosc posiadanej energii
 	 */
 	private void oddajEnergie(int ile) {
 		wyprodukowanaEnergia -= ile;
@@ -113,12 +112,11 @@ public class Elektrownia extends Agent {
 		public void action() {
 			produkujEnergie();
 		}
-
+		
 		@Override
 		public boolean done() {
 			return true;
 		}
-
 	}
 
 	/**
