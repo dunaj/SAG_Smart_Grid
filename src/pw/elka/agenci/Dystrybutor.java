@@ -118,9 +118,7 @@ public class Dystrybutor extends Agent {
 					.MatchPerformative(ACLMessage.REFUSE);
 			MessageTemplate mtInform = MessageTemplate
 					.MatchPerformative(ACLMessage.INFORM);
-			MessageTemplate mtConfirm = MessageTemplate
-					.MatchPerformative(ACLMessage.CONFIRM);
-			
+
 			switch (krok) {
 			case 0: // pytaj swojej elektrowni
 				ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
@@ -134,16 +132,8 @@ public class Dystrybutor extends Agent {
 				ACLMessage zgoda = myAgent.receive(mtAgree);
 				ACLMessage odmowa = myAgent.receive(mtRefuse);
 				ACLMessage niepelnaZgoda = myAgent.receive(mtInform);
-				ACLMessage odDystrybutora = myAgent.receive(mtConfirm);
 				
-				if( odDystrybutora != null )
-				{
-					System.out.println(toJa()+" otrzyma³em  energiê od dystrybutora "+odDystrybutora.getSender().toString());
-					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
-							 Integer.parseInt(odDystrybutora.getContent())));
-					krok = 3;
-				}
-				else if (zgoda != null) {
+				if (zgoda != null) {
 					System.out.println(toJa()+" otrzyma³em pe³n¹ energiê od "+zgoda.getSender().toString());
 					// pozytywna odpowiedz - Elektrownia ma tyle energii
 					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
@@ -199,7 +189,17 @@ public class Dystrybutor extends Agent {
 				break;
 			case 2:
 				ACLMessage odp2 = myAgent.receive(mtAgree);
-				if (odp2 != null) {
+				MessageTemplate mtConfirm = MessageTemplate
+				.MatchPerformative(ACLMessage.CONFIRM);
+				ACLMessage odDystrybutora = myAgent.receive(mtConfirm);
+				if( odDystrybutora != null )
+				{
+					System.out.println(toJa()+" otrzyma³em  energiê od dystrybutora "+odDystrybutora.getSender().toString());
+					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
+							 Integer.parseInt(odDystrybutora.getContent())));
+					krok = 3;
+				}
+				else if (odp2 != null) {
 					// broadcast ze juz mamy energie
 					ACLMessage informacja = new ACLMessage(ACLMessage.INFORM);
 					for (AID d : dystrybutorzy) {
