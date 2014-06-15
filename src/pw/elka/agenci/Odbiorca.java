@@ -12,14 +12,11 @@ import java.util.Random;
 
 /**
  * Agent proszacy o energie dytrybutorow i wykorzystujacy energie.
- * TODO wywalic konstruktory - wszystko dzieje sie w setup
- * TODO jak wymusic, zeby odbiorcy komunikowali sie tylko z jednym dystrybutorem
- * TODO a dystrybutorzy tylko z jedna elektrownia ;/
  */
 public class Odbiorca extends Agent implements OdbieraczEnergii {
 
 	private static final long serialVersionUID = -7698025950501425520L;
-	private static final int CZAS_TIKA = 2000;
+	private static final int CZAS_TIKA = 3000;
 	static int liczbaOdbiorcow = 0;
 	
 	/**
@@ -97,7 +94,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	}
 	
 	/**
-	 * 
+	 * Funkcja przedstawiajaca odbiorce
 	 */
 	public String toJa() {
 		return "Odbiorca "+nrOdbiorcy+": ";

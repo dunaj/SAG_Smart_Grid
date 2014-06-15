@@ -11,10 +11,9 @@ import jade.lang.acl.MessageTemplate;
 import java.util.Random;
 
 /**
- * Agent reprezentujacy jednostke wytwarzajaca energie TODO wywalic konstruktory
- * - wszystko dzieje sie w setup TODO jak wymusic, zeby odbiorcy komunikowali
- * sie tylko z jednym dystrybutorem TODO a dystrybutorzy tylko z jedna
- * elektrownia ;/
+ * Agent reprezentujacy jednostke wytwarzajaca energie 
+ * TODO Elektrownia na prosbe wysyla tyle energii ile ma,
+ * TODO jesli prosba jest wieksza niz ilosc posiadanej energii
  */
 public class Elektrownia extends Agent {
 
@@ -31,7 +30,7 @@ public class Elektrownia extends Agent {
 	 */
 	private int nrElektrowni;
 	/**
-	 * Dystrybutor z ktorym polaczona jest Elektronia
+	 * Dystrybutor z ktorym polaczona jest Elektrownia
 	 */
 	AID idDystrybutora;
 	/**
@@ -140,16 +139,31 @@ public class Elektrownia extends Agent {
 				if (sprawdzEnergie(ile)) {
 					ACLMessage odp = new ACLMessage(ACLMessage.AGREE);
 					odp.addReceiver(prosba.getSender());
+					odp.setContent((new Integer(ile)).toString());
 					System.out.println(toJa() + "Mam " + ile
 							+ "W energii. Wysylam do "
 							+ prosba.getSender().toString());
 					oddajEnergie(ile);
 					myAgent.send(odp);
 				} else {
-					ACLMessage odp = new ACLMessage(ACLMessage.REFUSE);
-					odp.addReceiver(prosba.getSender());
-					System.out.println(toJa()+"Nie mam tyle energii!");
-					myAgent.send(odp);
+					// jesli nie mam tyle ile dystr chce, daje tyle ile mam
+					if (wyprodukowanaEnergia > 0){
+						ACLMessage odp = new ACLMessage(ACLMessage.INFORM);
+						odp.addReceiver(prosba.getSender());
+						odp.setContent((new Integer(wyprodukowanaEnergia)).toString());
+						System.out.println(toJa() + "Mam " + wyprodukowanaEnergia
+								+ "W energii. Wysylam do "
+								+ prosba.getSender().toString());
+						oddajEnergie(wyprodukowanaEnergia);
+						myAgent.send(odp);
+						
+					} else {
+						// jesli w ogole nic nie mam informuje o tym dystr
+						ACLMessage odp = new ACLMessage(ACLMessage.REFUSE);
+						odp.addReceiver(prosba.getSender());
+						System.out.println(toJa()+"Nie mam w ogóle energii w tej chwili!");
+						myAgent.send(odp);
+					}
 				}
 			} else {
 				// jesli nie otrzymalem wiadomosci, to blokuje watek

@@ -13,10 +13,7 @@ import java.util.Vector;
 /**
  * Agent odpowiadajacy za odbieranie prosb o energie od odbiorcow i
  * przekazywanie prosb do Elektrowni, a takze za poszukiwanie brakujacej energii
- * u innych Dystrybutorow, wreszcie przekazywanie energii do odbiorcow. TODO
- * wywalic konstruktory - wszystko dzieje sie w setup TODO jak wymusic, zeby
- * odbiorcy komunikowali sie tylko z jednym dystrybutorem TODO a dystrybutorzy
- * tylko z jedna elektrownia ;/
+ * u innych Dystrybutorow, wreszcie przekazywanie energii do odbiorcow.
  */
 public class Dystrybutor extends Agent implements OdbieraczEnergii {
 
@@ -73,8 +70,8 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 				// jesli jest
 				AID odbiorca = prosba.getSender();
 				int energia = Integer.parseInt((prosba.getContent()));
-//				System.out.println(toJa() + "Odebra³em proœbê od "
-//						+ odbiorca.toString() + " o " + energia + "W energii");
+				System.out.println(toJa() + "Odebra³em proœbê od "
+						+ odbiorca.toString() + " o " + energia + "W energii");
 				myAgent.addBehaviour(new SzukajEnergii(odbiorca, energia));
 			} else {
 				// jesli nie otrzymalem wiadomosci, to blokuje watek
@@ -119,7 +116,9 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 					.MatchPerformative(ACLMessage.AGREE);
 			MessageTemplate mtRefuse = MessageTemplate
 					.MatchPerformative(ACLMessage.REFUSE);
-
+			MessageTemplate mtInform = MessageTemplate
+					.MatchPerformative(ACLMessage.INFORM);
+			
 			switch (krok) {
 			case 0: // pytaj swojej elektrowni
 				ACLMessage prosba = new ACLMessage(ACLMessage.REQUEST);
@@ -132,13 +131,38 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 			case 1:
 				ACLMessage zgoda = myAgent.receive(mtAgree);
 				ACLMessage odmowa = myAgent.receive(mtRefuse);
+				ACLMessage niepelnaZgoda = myAgent.receive(mtInform);
 				if (zgoda != null) {
-					System.out.println(toJa()+" otrzyma³em energiê od "+zgoda.getSender().toString());
+					System.out.println(toJa()+" otrzyma³em pe³n¹ energiê od "+zgoda.getSender().toString());
 					// pozytywna odpowiedz - Elektrownia ma tyle energii
 					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
 							szukanaEnergia));
 					// koncz szukanie energii
 					krok = 3;
+				} else if (niepelnaZgoda != null){
+					// jesli dostalem od Elektrowni niepelna ilosc energii
+					int otrzymanaIlosc = Integer.parseInt(niepelnaZgoda.getContent());
+					szukanaEnergia-=otrzymanaIlosc;
+					System.out.println(toJa()+" otrzyma³em "+otrzymanaIlosc+
+							"W energiê od "+niepelnaZgoda.getSender().toString());
+					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
+							otrzymanaIlosc));
+					if(!dystrybutorzy.isEmpty()){
+						// jesli sa jacys dystrybutorzy przypieci do tego szukaj u nich
+						ACLMessage prosba2 = new ACLMessage(ACLMessage.REQUEST);
+						for (AID d : dystrybutorzy) {
+							prosba2.addReceiver(d);
+						}
+						prosba2.setContent(String.valueOf(szukanaEnergia));
+						prosba2.setPerformative(ACLMessage.REQUEST);
+						myAgent.send(prosba2);
+						krok = 2;
+					} else {
+						//koncz szukanie i tak juz nic nie znajdziesz
+						krok = 3;
+					}
+					
+					
 				} else if (odmowa != null && !dystrybutorzy.isEmpty()) {
 					// negatywna odpowiedz - poszukiwanie energii u innych
 					// dystrybutorow, jesli dystrybutor jest do nich podlaczony
@@ -207,7 +231,7 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 			ACLMessage przesylka = new ACLMessage(ACLMessage.CONFIRM);
 			przesylka.setContent(String.valueOf(dostarczanaEnergia));
 			przesylka.addReceiver(odbiorca);
-			System.out.println(toJa()+"Przekazujê "+przesylka+"W energii do "+odbiorca);
+			System.out.println(toJa()+"Przekazujê "+dostarczanaEnergia+"W energii do "+odbiorca);
 			myAgent.send(przesylka);
 		}
 	}
