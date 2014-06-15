@@ -42,8 +42,7 @@ public class Odbiorca extends Agent {
         System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
         System.out.println(toJa()+"Moje id: "+this.getAID());
         nrOdbiorcy = liczbaOdbiorcow++;
-        Random gen = new Random();        
-		addBehaviour(new TickerBehaviour(this, gen.nextInt(CZAS_TIKA)) {
+		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
 			
 			private static final long serialVersionUID = 6022385825163721857L;
 
