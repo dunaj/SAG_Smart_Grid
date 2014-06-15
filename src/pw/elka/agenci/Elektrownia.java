@@ -52,8 +52,7 @@ public class Elektrownia extends Agent {
 				+ " jest gotowa do dzialania!");
 		System.out.println(toJa()+"Mój Dystrybutor: "+idDystrybutora);
         System.out.println(toJa()+"Moje id: "+this.getAID());
-        Random gen = new Random();
-		addBehaviour(new TickerBehaviour(this, gen.nextInt(CZAS_TIKA)) {
+		addBehaviour(new TickerBehaviour(this, CZAS_TIKA) {
 
 			private static final long serialVersionUID = 11213112L;
 
@@ -68,7 +67,7 @@ public class Elektrownia extends Agent {
 	@Override
 	protected void takeDown() {
 		super.takeDown();
-		System.out.println("Elektrownia " + nrElektrowni
+		System.out.println("Elektrownia " + getName()
 				+ " konczy swoje dzialanie!");
 	}
 
@@ -76,7 +75,7 @@ public class Elektrownia extends Agent {
 	 * 
 	 */
 	public String toJa() {
-		return "Elektrownia " + nrElektrowni + ": ";
+		return "Elektrownia " + this.getName().substring(0,2) + ": ";
 	}
 
 	/**
@@ -84,7 +83,7 @@ public class Elektrownia extends Agent {
 	 */
 	private void produkujEnergie() {
 		Random gen = new Random();
-		wyprodukowanaEnergia += gen.nextInt(maxProdukcja);
+		wyprodukowanaEnergia = gen.nextInt(maxProdukcja);
 		System.out.println(toJa() + "Wyprodukowalem " + wyprodukowanaEnergia
 				+ "W energii");
 	}

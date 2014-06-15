@@ -99,7 +99,7 @@ public class Odbiorca extends Agent implements OdbieraczEnergii {
 	 * Funkcja przedstawiajaca odbiorce
 	 */
 	public String toJa() {
-		return "Odbiorca "+nrOdbiorcy+": ";
+		return "Odbiorca "+ this.getName().substring(0,2)+": ";
 	}
 	
 	/**

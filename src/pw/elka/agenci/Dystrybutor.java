@@ -49,7 +49,7 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 	}
 
 	public String toJa() {
-		return "Dystrybutor " + nrDystrybutora + ": ";
+		return "Dystrybutor " +  this.getName().substring(0,2) + ": ";
 	}
 
 	/**
@@ -118,6 +118,8 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 					.MatchPerformative(ACLMessage.REFUSE);
 			MessageTemplate mtInform = MessageTemplate
 					.MatchPerformative(ACLMessage.INFORM);
+			MessageTemplate mtConfirm = MessageTemplate
+					.MatchPerformative(ACLMessage.CONFIRM);
 			
 			switch (krok) {
 			case 0: // pytaj swojej elektrowni
@@ -132,7 +134,16 @@ public class Dystrybutor extends Agent implements OdbieraczEnergii {
 				ACLMessage zgoda = myAgent.receive(mtAgree);
 				ACLMessage odmowa = myAgent.receive(mtRefuse);
 				ACLMessage niepelnaZgoda = myAgent.receive(mtInform);
-				if (zgoda != null) {
+				ACLMessage odDystrybutora = myAgent.receive(mtConfirm);
+				
+				if( odDystrybutora != null )
+				{
+					System.out.println(toJa()+" otrzyma³em  energiê od dystrybutora "+odDystrybutora.getSender().toString());
+					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
+							 Integer.parseInt(odDystrybutora.getContent())));
+					krok = 3;
+				}
+				else if (zgoda != null) {
 					System.out.println(toJa()+" otrzyma³em pe³n¹ energiê od "+zgoda.getSender().toString());
 					// pozytywna odpowiedz - Elektrownia ma tyle energii
 					myAgent.addBehaviour(new DostarczanieEnergii(odbiorca,
